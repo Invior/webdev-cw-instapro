@@ -2,6 +2,8 @@ import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
 import { initLikeListner } from "./likes-component.js";
+import { formatDistance } from "date-fns";
+import { ru } from "date-fns/locale";
 
 export function renderPostsPageComponent() {
   // TODO: реализовать рендер постов из api
@@ -39,7 +41,7 @@ export function renderPostsPageComponent() {
           </div>
           <p class="post-text">
             <span class="user-name">${post.user.name}</span>: ${post.description}</p>
-          <p class="post-date"></p>
+          <p class="post-date">${formatDistance(post.createdAt, new Date(), { addSuffix: true, locale: ru })}</p>
         </li>
       `;
     })

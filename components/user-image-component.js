@@ -1,6 +1,6 @@
 import { renderHeaderComponent } from "./header-component.js";
-//import { formatDistance } from "date-fns";
-//import { ru } from "date-fns/locale";
+import { formatDistance } from "date-fns";
+import { ru } from "date-fns/locale";
 import { initLikeListner } from "./likes-component.js";
 
 export function renderUserPostsPage({ posts }) {
@@ -44,7 +44,7 @@ export function renderUserPostsPage({ posts }) {
           <button  class="delete-form-button header-button logout-button" style="display:none" data-id="${post.id}">Удалить пост</button>
         </div>
         <p class="post-text"><span class="user-name">${post.user.name}</span>: ${post.description} </p>
-        <p class="post-date"></p>
+        <p class="post-date">${formatDistance(post.createdAt, new Date(), { addSuffix: true, locale: ru })}</p>
       </li>`;
     })
     .join("");
