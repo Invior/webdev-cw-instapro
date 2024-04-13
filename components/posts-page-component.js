@@ -1,50 +1,57 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
+import { initLikeListner } from "./likes-component.js";
 
-export function renderPostsPageComponent({ appEl }) {
+export function renderPostsPageComponent() {
   // TODO: реализовать рендер постов из api
-  console.log("Актуальный список постов:", posts);
-    const postHtml = posts.map((post) => {
-      return `<li class="post">
-      <div class="post-header" data-user-id="${post.user.id}">
-          <img src="${post.user.imageUrl}" class="post-header__user-image">
-          <p class="post-header__user-name">${post.user.name}</p>
-      </div>
-      <div class="post-image-container">
-        <img class="post-image" src="${post.imageUrl}">
-      </div>
-      <div class="post-likes">
-        <button data-post-id="${post.likes.id}" class="like-button">
-          <img src="./assets/images/like-active.svg">
-        </button>
-        <p class="post-likes-text">
-          Нравится: <strong>2</strong>
-        </p>
-      </div>
-      <p class="post-text">
-        <span class="user-name">${post.user.name}</span>
-        ${post.description}
-      </p>
-      <p class="post-date">
-        ${post.createdAt}
-      </p>
-    </li>`;
-    }).join('');
- 
-  /**
-   * TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
-   * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
-   */
-  const appHtml = `
-              <div class="page-container">
-                <div class="header-container"></div>
-                <ul class="posts">
-                ${postHtml}
-                </ul>
-              </div>`;
+  let likeImg;
+  let likes;
+  const elementApp = document.getElementById("app");
+  const appEl = posts
+    .map((post) => {
+      if (post.likes.length === 1) {
+        likes = post.likes[0].name;
+      } else if (post.likes.length > 1) {
+        likes = `${post.likes[0].name} и еще ${post.likes.length - 1}`;
+      } else {
+        likes = "";
+      }
+      if (post.isLiked) {
+        likeImg = '<img src="./assets/images/like-active.svg"></img>';
+      } else {
+        likeImg = '<img src="./assets/images/like-not-active.svg"></img>';
+      }
+      return `
+        <li class="post" id="post">
+          <div class="post-header" data-user-id="${post.user.id}">
+            <img  class="post-header__user-image" src=${post.user.imageUrl}>
+            <p class="post-header__user-name">${post.user.name}</p>
+          </div>
+          <div class="post-image-container">
+            <img class="post-image" src="${post.imageUrl}">
+          </div>
+          <div class="post-likes">
+            <button data-post-id="${post.id}" data-is-liked="${post.isLiked}" class="like-button ${post.isLiked ? "-active-like" : ""} "data-index="${post.user.id}">
+              ${likeImg}
+            </button>
+            <p class="post-likes-text">Нравится: <strong>${likes}</strong></p>
+          </div>
+          <p class="post-text">
+            <span class="user-name">${post.user.name}</span>: ${post.description}</p>
+          <p class="post-date"></p>
+        </li>
+      `;
+    })
+    .join("");
 
-  appEl.innerHTML = appHtml;
+  const appHtml = `
+    <div class="page-container">
+      <div class="header-container"></div>
+      <ul class="posts" id="posts">${appEl}</ul>
+    </div>`;
+
+    elementApp.innerHTML = appHtml;
 
   renderHeaderComponent({
     element: document.querySelector(".header-container"),
@@ -57,4 +64,5 @@ export function renderPostsPageComponent({ appEl }) {
       });
     });
   }
+  initLikeListner();
 }

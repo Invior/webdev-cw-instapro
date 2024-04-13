@@ -1,4 +1,4 @@
-import { getPosts } from "./api.js";
+import { getPosts, addPost, getUserPosts } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -14,13 +14,15 @@ import {
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
+  sanitizeHtml
 } from "./helpers.js";
+import { renderUserPostsPage } from "./components/user-image-component.js";
 
 export let user = getUserFromLocalStorage();
 export let page = null;
 export let posts = [];
 
-const getToken = () => {
+export const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
   return token;
 };
@@ -70,13 +72,20 @@ export const goToPage = (newPage, data) => {
       // TODO: реализовать получение постов юзера из API
       console.log("Открываю страницу пользователя: ", data.userId);
       page = USER_POSTS_PAGE;
-      posts = [];
-      return renderApp();
+      renderUserPostsPage({ posts });
+      return getUserPosts({ id: data.userId })
+      .then((newPosts) => {
+        page = USER_POSTS_PAGE;
+        posts = newPosts;
+        renderApp();
+      })
+      .catch((error) => {
+        console.error(error);
+        goToPage(USER_POSTS_PAGE);
+      });
     }
-
     page = newPage;
     renderApp();
-
     return;
   }
 
@@ -107,10 +116,19 @@ const renderApp = () => {
   }
 
   if (page === ADD_POSTS_PAGE) {
+    const textareaInputElement = document.getElementById("textarea-input");
     return renderAddPostPageComponent({
       appEl,
       onAddPostClick({ description, imageUrl }) {
         // TODO: реализовать добавление поста в API
+        const textareaInputElement = document.getElementById("textarea-input");
+        addPost({
+          description: sanitizeHtml(textareaInputElement.value),
+          imageUrl
+        })
+        .then((response) => {
+          renderPostsPageComponent()
+        })
         console.log("Добавляю пост...", { description, imageUrl });
         goToPage(POSTS_PAGE);
       },
@@ -125,8 +143,7 @@ const renderApp = () => {
 
   if (page === USER_POSTS_PAGE) {
     // TODO: реализовать страницу фотографию пользвателя
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
-    return;
+    return renderUserPostsPage({ posts });
   }
 };
 
