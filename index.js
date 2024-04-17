@@ -1,4 +1,4 @@
-import { getPosts, addPost, getUserPosts } from "./api.js";
+import { addPost, getPosts, getUserPosts, deletePost } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -13,8 +13,8 @@ import { renderLoadingPageComponent } from "./components/loading-page-component.
 import {
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
+  sanitizeHtml,
   saveUserToLocalStorage,
-  sanitizeHtml
 } from "./helpers.js";
 import { renderUserPostsPage } from "./components/user-image-component.js";
 
@@ -33,9 +33,6 @@ export const logout = () => {
   goToPage(POSTS_PAGE);
 };
 
-/**
- * Включает страницу приложения
- */
 export const goToPage = (newPage, data) => {
   if (
     [
@@ -53,8 +50,9 @@ export const goToPage = (newPage, data) => {
     }
 
     if (newPage === POSTS_PAGE) {
-      page = LOADING_PAGE;
+      page = POSTS_PAGE;
       renderApp();
+
 
       return getPosts({ token: getToken() })
         .then((newPosts) => {
@@ -69,8 +67,8 @@ export const goToPage = (newPage, data) => {
     }
 
     if (newPage === USER_POSTS_PAGE) {
-      // TODO: реализовать получение постов юзера из API
-      console.log("Открываю страницу пользователя: ", data.userId);
+      // TODO: реализовано получение постов юзера из API
+      // console.log("Открываю страницу пользователя:", data.userId);
       page = USER_POSTS_PAGE;
       renderUserPostsPage({ posts });
       return getUserPosts({ id: data.userId })
@@ -88,7 +86,6 @@ export const goToPage = (newPage, data) => {
     renderApp();
     return;
   }
-
   throw new Error("страницы не существует");
 };
 
@@ -116,11 +113,10 @@ const renderApp = () => {
   }
 
   if (page === ADD_POSTS_PAGE) {
-    const textareaInputElement = document.getElementById("textarea-input");
     return renderAddPostPageComponent({
       appEl,
       onAddPostClick({ description, imageUrl }) {
-        // TODO: реализовать добавление поста в API
+        // TODO: реализовано добавление поста в API
         const textareaInputElement = document.getElementById("textarea-input");
         addPost({
           description: sanitizeHtml(textareaInputElement.value),
@@ -136,15 +132,12 @@ const renderApp = () => {
   }
 
   if (page === POSTS_PAGE) {
-    return renderPostsPageComponent({
-      appEl,
-    });
+    return renderPostsPageComponent({appEl});
   }
 
   if (page === USER_POSTS_PAGE) {
-    // TODO: реализовать страницу фотографию пользвателя
+    // TODO: реализована страница фотографий пользвателя
     return renderUserPostsPage({ posts });
   }
 };
-
 goToPage(POSTS_PAGE);

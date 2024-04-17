@@ -1,17 +1,20 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
-import { initLikeListner } from "./likes-component.js";
 import { formatDistance } from "date-fns";
 import { ru } from "date-fns/locale";
+import { initLikeLisner } from "./likes-component.js";
+
+// const now = post.createdAt
+// const formatDate = formatDistance(post.createdAt , new Date(), { addSuffix: true, locale: ru })
 
 export function renderPostsPageComponent() {
   // TODO: реализовать рендер постов из api
   let likeImg;
   let likes;
-  const elementApp = document.getElementById("app");
+  const appElement = document.getElementById("app");
   const appEl = posts
-    .map((post) => {
+    .map((post, index) => {
       if (post.likes.length === 1) {
         likes = post.likes[0].name;
       } else if (post.likes.length > 1) {
@@ -19,6 +22,7 @@ export function renderPostsPageComponent() {
       } else {
         likes = "";
       }
+
       if (post.isLiked) {
         likeImg = '<img src="./assets/images/like-active.svg"></img>';
       } else {
@@ -53,7 +57,7 @@ export function renderPostsPageComponent() {
       <ul class="posts" id="posts">${appEl}</ul>
     </div>`;
 
-    elementApp.innerHTML = appHtml;
+  appElement.innerHTML = appHtml;
 
   renderHeaderComponent({
     element: document.querySelector(".header-container"),
@@ -66,5 +70,5 @@ export function renderPostsPageComponent() {
       });
     });
   }
-  initLikeListner();
+  initLikeLisner();
 }

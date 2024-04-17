@@ -2,7 +2,7 @@ import { POSTS_PAGE, USER_POSTS_PAGE, } from "../routes.js";
 import { goToPage, getToken } from "../index.js";
 import { disLike, like } from "../api.js";
 
-export function initLikeListner(userId) {
+export function initLikeLisner(userId) {
   const likeButtonElement = document.querySelectorAll(".like-button");
   for (const likeElement of likeButtonElement) {
     likeElement.addEventListener("click", () => {
@@ -36,4 +36,4 @@ export function initLikeListner(userId) {
   }
   
 }
-initLikeListner();
+initLikeLisner();

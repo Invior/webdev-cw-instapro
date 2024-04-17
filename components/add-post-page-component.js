@@ -1,6 +1,6 @@
+import { sanitizeHtml } from '../helpers.js';
 import { renderHeaderComponent } from "./header-component.js";
 import { renderUploadImageComponent } from "./upload-image-component.js";
-import { sanitizeHtml } from '../helpers.js';
 
 export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
   let imageUrl = "";
@@ -25,12 +25,20 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
 
     appEl.innerHTML = appHtml;
     
+
     const description = document.getElementById("textarea-input")
     document.getElementById("add-button").addEventListener("click", () => {
+      if (description.value === "" && imageUrl === "") {
+        alert("Выберите фото и добавьте описание");
+      } else if (imageUrl === "") {
+        alert("Фотография не выбрана");
+      } else if (description.value === "") {
+        alert("Добавьте описание");
+      } else {
       onAddPostClick({
         description: sanitizeHtml(description.value),
         imageUrl,
-      });
+      })};
     });
   };
 

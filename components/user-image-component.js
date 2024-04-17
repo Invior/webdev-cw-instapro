@@ -1,14 +1,14 @@
 import { renderHeaderComponent } from "./header-component.js";
 import { formatDistance } from "date-fns";
 import { ru } from "date-fns/locale";
-import { initLikeListner } from "./likes-component.js";
+import { initLikeLisner } from "./likes-component.js";
 
 export function renderUserPostsPage({ posts }) {
   // TODO: реализован рендер постов из api
   console.log("Cписок постов юзера :", posts);
   let likeImg;
   let likes;
-
+  
   const appElement = document.getElementById("app");
   const postEl = posts
     .map((post) => {
@@ -48,7 +48,10 @@ export function renderUserPostsPage({ posts }) {
       </li>`;
     })
     .join("");
-
+  /**
+   * TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
+   * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
+   */
   const appHtml = `
     <div class="page-container">
       <div class="header-container"></div>
@@ -59,5 +62,7 @@ export function renderUserPostsPage({ posts }) {
   renderHeaderComponent({
     element: document.querySelector(".header-container"),
   });
-  initLikeListner(posts[0].user.id);
+  initLikeLisner(posts[0].user.id);
+  // initDeleteButtonLisners({ id });
+  //renderUserPostsPage({ posts });
 }
