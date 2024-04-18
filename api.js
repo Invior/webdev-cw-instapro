@@ -19,14 +19,14 @@ export function getPosts({ token }) {
   })
     .then((response) => {
       if (response.status === 401) {
-        throw new Error("Нет авторизации");
-      }
-      return response.json();
+       alert("Нет авторизации");
+      } 
+        return response.json();    
     })
     .then((data) => {
       return data.posts;
-    });
-}
+    })
+  }
 
 export function getUserPosts({ id }) {
   console.log(id)
@@ -84,19 +84,15 @@ export function like({ id }) {
   })
   .then((response) => {
     if (response.status === 401) {
-      throw new Error("Нет авторизации");
+      alert("Нет авторизации");
+    } else {
+      return response.json();
     }
-    return response.json();
-    
-  })
-    .then(data => {
-    return data.post
   })
   .catch((error) => {
-    alert("Вы не авторизованы");
-    console.log(error);
-  });
-}
+      console.log(error);
+    });
+  }
 
 export function disLike({ id}) {
   return fetch(`${postsHost}/${id}/dislike`, {
